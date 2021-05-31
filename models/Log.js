@@ -15,8 +15,9 @@ const Logschema = mongoose.Schema({
     default: Date.now
   },
   tech:{
-    type: mongoose.Schema.Types.ObjectId
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Tech'
   },
 });
 
-module.exports = mongoose.model('log', Logschema);
+module.exports = mongoose.model('Log', Logschema);

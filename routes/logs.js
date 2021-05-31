@@ -4,6 +4,7 @@ const { body, validationResult } = require('express-validator');
 
 const User = require('../models/User');
 const Log = require('../models/Log');
+const Technitian = require('../models/Tech');
 const { json } = require('express');
 
 const router = express.Router();
@@ -11,14 +12,17 @@ const router = express.Router();
 //@route  GET api/logs
 //@desc   Get all logs
 //@access Private
-router.get('/', auth,
+router.get('/',
  async (req, res) => {
    try {
-     const logs = await Log.find().sort({date: -1});
+
+    const logs = await Log.find({})
+    .populate("tech")
+    .sort({date: -1});
      res.json(logs);
    } catch (error) {
     console.error(error.message);
-    error.status(500).send('server error');
+    res.status(500).send('server error');
    }
   });
 
@@ -34,10 +38,12 @@ async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { message, attention, date, tech} = req.body;
+    const { message, attention, date, technitian} = req.body;
     
   try {
-    const newLog = new Log({message, attention, date, tech});
+    const tech = await Technitian.findById(technitian);
+    console.log(tech.id);
+    const newLog = new Log({message, attention, date, tech: tech.id});
 
     const log = await newLog.save();
 
@@ -45,7 +51,7 @@ async (req, res) => {
    
   } catch (error) {
     console.error(error.message);
-    error.status(500).send('server error');
+    res.status(500).send('server error');
   }
 });
 
@@ -95,7 +101,7 @@ async (req, res) => {
     res.json({msg: 'Log removed'});
   } catch (error) {
     console.error(error.message);
-    error.status(500).send('server error');
+    res.status(500).send('server error');
   }
 });
 

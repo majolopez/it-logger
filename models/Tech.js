@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const TechSchema = mongoose.Schema({
+const TechnitianSchema = mongoose.Schema({
   firstName: {
     type: String,
     required: true
@@ -11,4 +11,4 @@ const TechSchema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('tech', TechSchema);
+module.exports = mongoose.model('Tech', TechnitianSchema);

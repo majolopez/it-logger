@@ -3,7 +3,7 @@ const auth = require('../middleware/auth')
 const { body, validationResult } = require('express-validator');
 
 const User = require('../models/User');
-const Tech = require('../models/Tech');
+const Technitian = require('../models/Tech');
 const { json } = require('express');
 
 const router = express.Router();
@@ -11,14 +11,14 @@ const router = express.Router();
 //@route  GET api/techs
 //@desc   Get all techs
 //@access Private
-router.get('/', auth,
+router.get('/',
  async (req, res) => {
    try {
-     const techs = await Tech.find().sort({date: -1});
+     const techs = await Technitian.find().sort({date: -1});
      res.json(techs);
    } catch (error) {
     console.error(error.message);
-    error.status(500).send('server error');
+    res.status(500).send('server error');
    }
   });
 
@@ -37,7 +37,7 @@ async (req, res) => {
     const { firstName, lastName } = req.body;
     
   try {
-    const newTech = new Tech({firstName, lastName });
+    const newTech = new Technitian({firstName, lastName });
 
     const tech = await newTech.save();
 
@@ -45,7 +45,7 @@ async (req, res) => {
    
   } catch (error) {
     console.error(error.message);
-    error.status(500).send('server error');
+    res.status(500).send('server error');
   }
 });
 
@@ -62,7 +62,7 @@ async (req, res) => {
   if(lastName) techFields.lastName = lastName;
 
   try {
-    let tech = await Tech.findById(req.params.id);
+    let tech = await Technitian.findById(req.params.id);
 
     if(!tech) return res.status(404).json({ msg: 'Tech not found'});
 
@@ -74,7 +74,7 @@ async (req, res) => {
     res.json(tech);
   } catch (error) {
     console.error(error.message);
-    error.status(500).send('server error');
+    res.status(500).send('server error');
   }
 });
 
@@ -84,16 +84,16 @@ async (req, res) => {
 router.delete('/:id', auth,
 async (req, res) => {
   try {
-    let tech = await Tech.findById(req.params.id);
+    let tech = await Technitian.findById(req.params.id);
 
     if(!tech) return res.status(404).json({ msg: 'Tech not found'});
 
-    await Tech.findByIdAndRemove(req.params.id );
+    await Technitian.findByIdAndRemove(req.params.id );
     
     res.json({msg: 'Tech removed'});
   } catch (error) {
     console.error(error.message);
-    error.status(500).send('server error');
+    res.status(500).send('server error');
   }
 });
 
