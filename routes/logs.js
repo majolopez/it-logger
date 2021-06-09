@@ -16,9 +16,11 @@ router.get('/',
  async (req, res) => {
    try {
 
-    const logs = await Log.find({})
-    .populate("tech")
-    .sort({date: -1});
+    const text = req.query.q;
+
+    const logs = text === undefined  ?  await Log.find({}).populate("tech").sort({date: -1}) : 
+    await Log.find({ message: { $regex: text } }).populate("tech").sort({date: -1});
+
      res.json(logs);
    } catch (error) {
     console.error(error.message);
@@ -29,7 +31,7 @@ router.get('/',
 //@route  POST api/logs
 //@desc   Add a log
 //@access Public
-router.post('/', [auth, [
+router.post('/', [[
   body('message','message').notEmpty()
 ]], 
 async (req, res) => {
@@ -42,7 +44,7 @@ async (req, res) => {
     
   try {
     const tech = await Technitian.findById(technitian);
-    console.log(tech.id);
+    
     const newLog = new Log({message, attention, date, tech: tech.id});
 
     const log = await newLog.save();
@@ -58,14 +60,14 @@ async (req, res) => {
 //@route  PUT api/logs/:id
 //@desc   Update logs
 //@access Public
-router.put('/:id',auth , 
+router.put('/:id',
 async (req, res) => {
   const { message, attention, date, tech} = req.body;
 
   //Build contact object
   const logFields = {};
   if(message) logFields.message = message;
-  if(attention) logFields.attention = attention;
+  logFields.attention = attention;
   if(date) logFields.date = date;
   if(tech) logFields.tech = tech;
 
@@ -76,7 +78,7 @@ async (req, res) => {
 
     log = await Log.findByIdAndUpdate(req.params.id, 
       { $set: logFields }, 
-      {new: true} );
+      {new: true} ).populate("tech");
     
     
     res.json(log);
@@ -89,7 +91,7 @@ async (req, res) => {
 //@route  DELETE api/logs/:id
 //@desc   Delete a log
 //@access Public
-router.delete('/:id', auth,
+router.delete('/:id', 
 async (req, res) => {
   try {
     let log = await Log.findById(req.params.id);

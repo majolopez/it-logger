@@ -25,7 +25,7 @@ router.get('/',
 //@route  POST api/techs
 //@desc   Add a tech
 //@access Public
-router.post('/', [auth, [
+router.post('/', [ [
   body('firstName','Should have a first name').notEmpty()
 ]], 
 async (req, res) => {
@@ -81,7 +81,7 @@ async (req, res) => {
 //@route  DELETE api/techs/:id
 //@desc   Delete a tech
 //@access Public
-router.delete('/:id', auth,
+router.delete('/:id',
 async (req, res) => {
   try {
     let tech = await Technitian.findById(req.params.id);

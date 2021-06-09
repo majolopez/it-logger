@@ -1,5 +1,13 @@
 
-import { GET_LOGS, SET_LOADING, LOGS_ERROR } from '../actions/types';
+import { GET_LOGS, 
+        SEARCH_LOG,
+        SET_LOADING, 
+        LOGS_ERROR, 
+        ADD_LOG, 
+        DELETE_LOG,
+        CLEAR_CURRENT,
+        SET_CURRENT,
+        UPDATE_LOG} from '../actions/types';
 
 const initialState ={
   logs: null,
@@ -7,25 +15,57 @@ const initialState ={
   loading: false,
   error: null
 }
-
+// eslint-disable-next-line
 export default (state= initialState, action) => {
   switch(action.type) {
     case GET_LOGS:
       return {
         ...state,
         logs: action.payload
-      }
+      };
+    case SEARCH_LOG:
+      return {
+        ...state,
+        logs: action.payload
+      };
+    case ADD_LOG:
+      return {
+        ...state,
+        logs: [...state.logs, action.payload ]
+      };
+    case DELETE_LOG:
+      return{
+        ...state,
+        logs: state.logs.filter(log => log._id !== action.payload),
+        loading: false
+      };
+    case UPDATE_LOG:
+      return{
+        ...state,
+        logs: state.logs.map(log => log._id === action.payload._id ? action.payload : log ),
+        loading: false
+      };
+    case SET_CURRENT:
+      return {
+        ...state,
+        current: action.payload
+      };
+    case CLEAR_CURRENT:
+      return {
+        ...state,
+        current: null
+      };
     case SET_LOADING:
       return {
         ...state,
         loading: true
-      }
+      };
     case LOGS_ERROR:
       console.error(action.payload)
       return {
         ...state,
         error: action.payload
-      }
+      };
     default:
       return state;
   }
